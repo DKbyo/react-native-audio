@@ -27,8 +27,8 @@ import android.os.Build;
 import android.os.Environment;
 import android.media.MediaRecorder;
 import android.media.AudioManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
@@ -315,10 +315,15 @@ class AudioRecorderManager extends ReactContextBaseJavaModule {
         if (!isPaused) {
           WritableMap body = Arguments.createMap();
           body.putDouble("currentTime", stopWatch.getTimeSeconds());
+          int maxAmplitude = 0;
+          if (recorder != null) {
+            maxAmplitude = recorder.getMaxAmplitude();
+          }
+          body.putInt("currentMetering", maxAmplitude);
           sendEvent("recordingProgress", body);
         }
       }
-    }, 0, 1000);
+    }, 0, 200);
   }
 
   private void stopTimer(){
